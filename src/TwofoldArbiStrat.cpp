@@ -1,7 +1,6 @@
 #include <TwofoldArbiStrat.hpp>
 #include <Exchange.hpp>
-#include <MinHeap.hpp>
-#include <MaxHeap.hpp>
+#include <Heap.hpp>
 #include <Asset.hpp>
 #include <vector>
 #include <thread>
@@ -44,8 +43,8 @@ namespace trading {
                 std::clock_t timer_end = std::clock();
 
 
-                Asset<double, std::string> buyAsset = sells.getMin();
-                Asset<double, std::string> sellAsset = buys.getMax();
+                Asset<double, std::string> buyAsset = sells.getTop();
+                Asset<double, std::string> sellAsset = buys.getTop();
 
                 if (sellAsset.val > buyAsset.val) {
                     std::cout << "==================== Arbitrage Opportunity ====================" << std::endl;

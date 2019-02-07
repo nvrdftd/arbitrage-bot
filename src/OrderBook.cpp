@@ -6,17 +6,17 @@ namespace trading {
     double OrderBook::getL(OrderType type)
     {
         if (type == OrderType::Buy) {
-            return _buyMinHeap.getMin().val;
+            return _buyMinHeap.getTop().val;
         } else {
-            return _sellMinHeap.getMin().val;
+            return _sellMinHeap.getTop().val;
         }
     }
     double OrderBook::getH(OrderType type)
     {
         if (type == OrderType::Buy) {
-            return _buyMaxHeap.getMax().val;
+            return _buyMaxHeap.getTop().val;
         } else {
-            return _sellMaxHeap.getMax().val;
+            return _sellMaxHeap.getTop().val;
         }
     }
     void OrderBook::add(OrderType type, double price, const std::string &name)

@@ -3,8 +3,7 @@
 #include <vector>
 #include <string>
 #include <OrderType.hpp>
-#include <MinHeap.hpp>
-#include <MaxHeap.hpp>
+#include <Heap.hpp>
 #include <Asset.hpp>
 
 namespace trading {
