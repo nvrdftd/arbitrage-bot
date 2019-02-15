@@ -20,8 +20,8 @@ namespace trading {
 
             do {
 
-                utils::MinHeap<double, std::string, Asset<double, std::string> > sells;
-                utils::MaxHeap<double, std::string, Asset<double, std::string> > buys;
+                utils::MinHeap<AssetPtr> sells;
+                utils::MaxHeap<AssetPtr> buys;
 
                 std::vector<std::thread> thPool;
 
@@ -29,10 +29,10 @@ namespace trading {
 
                 for (int i = 0; i < exgs.size(); ++i) {
                     thPool.push_back(std::thread([&sells, &exgs, i, this] () {
-                        sells.insert(exgs[i]->getSellPrice(_assetA, _assetB), exgs[i]->getName());
+                        sells.insert(exgs[i]->getSellAsset(_assetA, _assetB));
                     }));
                     thPool.push_back(std::thread([&buys, &exgs, i, this] () {
-                        buys.insert(exgs[i]->getBuyPrice(_assetA, _assetB), exgs[i]->getName());
+                        buys.insert(exgs[i]->getBuyAsset(_assetA, _assetB));
                     }));
                 }
 
@@ -43,17 +43,21 @@ namespace trading {
                 std::clock_t timer_end = std::clock();
 
 
-                Asset<double, std::string> buyAsset = sells.getTop();
-                Asset<double, std::string> sellAsset = buys.getTop();
+                AssetPtr buyAsset = sells.getTop();
+                AssetPtr sellAsset = buys.getTop();
 
-                if (sellAsset.val > buyAsset.val) {
-                    std::cout << "==================== Arbitrage Opportunity ====================" << std::endl;
+                double riskFactor = 0.9; // the amount that may not be present when the bot sells the asset
+
+                double amtDiff = sellAsset->amt * riskFactor - buyAsset->amt;
+
+                if ((sellAsset->val > buyAsset->val) && (amtDiff >= 0)) {
+                    std::cout << "==================== Arbitrage Opportunity (" << _assetA << "/" << _assetB << ") ====================" << std::endl;
                     std::cout <<
-                        "Buy at " << buyAsset.id << ": " << buyAsset.val
+                        "Buy at " << buyAsset->id << ": " << buyAsset->val
                         << " - " <<
-                        "Sell at " << sellAsset.id << ": " << sellAsset.val
+                        "Sell at " << sellAsset->id << ": " << sellAsset->val
                     << std::endl;
-                    std::cout << "!!!!!!!!!! Detected !!!!!!!!!!" << std::endl;
+                    std::cout << "Amount: " << buyAsset->amt << std::endl;
                     std::cout << "Prices Access Duration: " << 1000000.0 * (timer_end - timer_start) / CLOCKS_PER_SEC << " ns" << std::endl;
                 }
 

@@ -4,6 +4,7 @@
 #include <OrderBook.hpp>
 #include <OrderType.hpp>
 #include <WSClient.hpp>
+#include <UtilLib.hpp>
 #include <json.hpp>
 
 namespace arbitrage {
@@ -12,6 +13,7 @@ namespace arbitrage {
     void BinanceClient::connect(const std::string &assetA, const std::string &assetB)
     {
         _exchange.setName("Binance");
+        _exchange.setTradingFee(0.001);
         std::thread connThread([this, &assetA, &assetB]() {
             std::cout << "Start a connection to Binance..." << std::endl;
             WSClient client;
@@ -59,13 +61,15 @@ namespace arbitrage {
         OrderBookPtr orders = std::make_shared<OrderBook> ();
 
         for (const auto &bid: dataJ["data"]["bids"]) {
-            std::string doubleStr = bid[0];
-            orders->add(OrderType::Buy, std::stod(doubleStr), _exchange.getName());
+            const std::string priceStr = bid[0];
+            const std::string amountStr = bid[1];
+            orders->add(OrderType::Buy, std::stod(priceStr), std::stod(amountStr), _exchange.getName());
         }
 
         for (const auto &ask: dataJ["data"]["asks"]) {
-            std::string doubleStr = ask[0];
-            orders->add(OrderType::Sell, std::stod(doubleStr), _exchange.getName());
+            const std::string priceStr = ask[0];
+            const std::string amountStr = ask[1];
+            orders->add(OrderType::Sell, std::stod(priceStr), std::stod(amountStr), _exchange.getName());
         }
 
         market->insert(make_pair(assetPair, orders));

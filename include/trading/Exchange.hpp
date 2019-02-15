@@ -6,26 +6,29 @@
 #include <string>
 #include <boost/beast.hpp>
 #include <OrderBook.hpp>
+#include <Asset.hpp>
 
 
 namespace trading {
 
-    typedef std::shared_ptr<OrderBook> OrderBookPtr;
     typedef std::shared_ptr<std::unordered_map<std::string, OrderBookPtr> > MarketPtr;
     typedef std::unordered_map<std::string, OrderBookPtr> Market;
 
     namespace beast = boost::beast;
     class Exchange {
         public:
-            double getBuyPrice(const std::string &, const std::string &);
-            double getSellPrice(const std::string &, const std::string &);
+            AssetPtr getBuyAsset(const std::string &, const std::string &);
+            AssetPtr getSellAsset(const std::string &, const std::string &);
             void updateMarket(MarketPtr);
             bool exist();
             void setName(const std::string &);
             const std::string &getName() const;
+            void setTradingFee(double);
+            const double getTradingFee() const;
         private:
             std::string _name;
             MarketPtr _market;
             std::mutex _marketLock;
+            double _tradingFee;
     };
 }

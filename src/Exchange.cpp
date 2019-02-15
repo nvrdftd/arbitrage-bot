@@ -2,6 +2,7 @@
 #include <Exchange.hpp>
 #include <OrderType.hpp>
 #include <OrderBook.hpp>
+#include <Asset.hpp>
 #include <json.hpp>
 #include <mutex>
 #include <ctime>
@@ -10,25 +11,27 @@
 namespace trading {
     using json = nlohmann::json;
 
-    double Exchange::getBuyPrice(const std::string &assetA, const std::string &assetB)
+    AssetPtr Exchange::getBuyAsset(const std::string &assetA, const std::string &assetB)
     {
         const std::string assetPair = assetA + assetB;
 
         _marketLock.lock();
         auto marketIter = _market->find(assetPair);
-        double price = marketIter->second->getH(OrderType::Buy);
+        AssetPtr asset = marketIter->second->getH(OrderType::Buy);
         _marketLock.unlock();
 
-        return price;
+        return asset;
     }
-    double Exchange::getSellPrice(const std::string &assetA, const std::string &assetB)
+    AssetPtr Exchange::getSellAsset(const std::string &assetA, const std::string &assetB)
     {
         const std::string assetPair = assetA + assetB;
+
         _marketLock.lock();
         auto marketIter = _market->find(assetPair);
-        double price = marketIter->second->getL(OrderType::Sell);
+        AssetPtr asset = marketIter->second->getL(OrderType::Sell);
         _marketLock.unlock();
-        return price;
+
+        return asset;
     }
     void Exchange::updateMarket(MarketPtr market)
     {
@@ -50,5 +53,13 @@ namespace trading {
     const std::string &Exchange::getName() const
     {
         return _name;
+    }
+    void Exchange::setTradingFee(double tradingFee)
+    {
+        _tradingFee = tradingFee;
+    }
+    const double Exchange::getTradingFee() const
+    {
+        return _tradingFee;
     }
 }

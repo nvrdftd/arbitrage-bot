@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <chrono>
+#include <thread>
 #include <BinanceClient.hpp>
 #include <KuCoinClient.hpp>
 #include <Detector.hpp>

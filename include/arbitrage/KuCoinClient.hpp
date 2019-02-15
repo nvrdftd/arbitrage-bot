@@ -1,6 +1,5 @@
 #pragma once
 
-#include <WSClient.hpp>
 #include <Exchange.hpp>
 #include <json.hpp>
 #include <string>

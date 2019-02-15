@@ -9,13 +9,15 @@
 namespace trading {
     class OrderBook {
         public:
-            double getL(OrderType);
-            double getH(OrderType);
-            void add(OrderType, double, const std::string &);
+            AssetPtr getL(OrderType);
+            AssetPtr getH(OrderType);
+            void add(OrderType, double, double, const std::string &);
         private:
-            utils::MinHeap<double, std::string, Asset<double, std::string> > _buyMinHeap;
-            utils::MaxHeap<double, std::string, Asset<double, std::string> > _buyMaxHeap;
-            utils::MinHeap<double, std::string, Asset<double, std::string> > _sellMinHeap;
-            utils::MaxHeap<double, std::string, Asset<double, std::string> > _sellMaxHeap;
+            utils::MinHeap<AssetPtr> _buyMinHeap;
+            utils::MaxHeap<AssetPtr> _buyMaxHeap;
+            utils::MinHeap<AssetPtr> _sellMinHeap;
+            utils::MaxHeap<AssetPtr> _sellMaxHeap;
     };
+
+    typedef std::shared_ptr<OrderBook> OrderBookPtr;
 }
