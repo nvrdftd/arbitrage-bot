@@ -50,7 +50,8 @@ namespace trading {
 
                 double amtDiff = sellAsset->amt * riskFactor - buyAsset->amt;
 
-                if ((sellAsset->val > buyAsset->val) && (amtDiff >= 0)) {
+                // The profitable amount has to be greater than the trading fees due; otherwise, it makes no sense to execute the trade.
+                if ((sellAsset->val > buyAsset->val) && (amtDiff >= 0) && ((sellAsset->val * (1 - sellAsset->fee) - buyAsset->val * (1 + buyAsset->fee)) > 0)) {
                     std::cout << "==================== Arbitrage Opportunity (" << _assetA << "/" << _assetB << ") ====================" << std::endl;
                     std::cout <<
                         "Buy at " << buyAsset->id << ": " << buyAsset->val
