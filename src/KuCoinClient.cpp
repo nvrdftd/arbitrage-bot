@@ -18,7 +18,7 @@ namespace arbitrage {
 
         // Assume that trading fee is always 0.1%, although some variaion of it may be applied to a specific account
         _exchange.setTradingFee(0.001);
-        
+
         std::thread connThread([this, &assetA, &assetB]() {
             std::cout << "Start a connection to KuCoin..." << std::endl;
             RClient rClient;
@@ -53,11 +53,11 @@ namespace arbitrage {
         const auto &data = dataJ["data"];
 
         for (const auto &buy: data["BUY"]) {
-            orders->add(OrderType::Buy, buy[0], buy[1], _exchange.getName());
+            orders->add(OrderType::Buy, buy[0], buy[1], _exchange);
         }
 
         for (const auto &sell: data["SELL"]) {
-            orders->add(OrderType::Sell, sell[0], sell[1], _exchange.getName());
+            orders->add(OrderType::Sell, sell[0], sell[1], _exchange);
         }
 
         market->insert(make_pair(assetPair, orders));
