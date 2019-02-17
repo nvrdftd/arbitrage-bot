@@ -11,6 +11,9 @@
 
 namespace trading {
 
+    class OrderBook;
+
+    typedef std::shared_ptr<OrderBook> OrderBookPtr;
     typedef std::shared_ptr<std::unordered_map<std::string, OrderBookPtr> > MarketPtr;
     typedef std::unordered_map<std::string, OrderBookPtr> Market;
 

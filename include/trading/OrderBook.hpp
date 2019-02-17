@@ -8,6 +8,7 @@
 #include <Exchange.hpp>
 
 namespace trading {
+    class Exchange;
     class OrderBook {
         public:
             AssetPtr getL(OrderType);
