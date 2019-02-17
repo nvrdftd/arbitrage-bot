@@ -1,6 +1,7 @@
 #include <OrderType.hpp>
 #include <OrderBook.hpp>
 #include <Asset.hpp>
+#include <Exchange.hpp>
 #include <memory>
 
 namespace trading {
@@ -21,12 +22,13 @@ namespace trading {
             return _sellMaxHeap.getTop();
         }
     }
-    void OrderBook::add(OrderType type, double price, double amount, const std::string &name)
+    void OrderBook::add(OrderType type, double price, double amount, Exchange &exg)
     {
         AssetPtr asset = std::make_shared<Asset<double, std::string> > ();
         asset->val = price;
         asset->amt = amount;
-        asset->id = name;
+        asset->id = exg.getName();
+        asset->fee = exg.getTradingFee();
         if (type == OrderType::Buy) {
             _buyMinHeap.insert(asset);
             _buyMaxHeap.insert(asset);

@@ -66,13 +66,13 @@ namespace arbitrage {
         for (const auto &bid: dataJ["data"]["bids"]) {
             const std::string priceStr = bid[0];
             const std::string amountStr = bid[1];
-            orders->add(OrderType::Buy, std::stod(priceStr), std::stod(amountStr), _exchange.getName());
+            orders->add(OrderType::Buy, std::stod(priceStr), std::stod(amountStr), _exchange);
         }
 
         for (const auto &ask: dataJ["data"]["asks"]) {
             const std::string priceStr = ask[0];
             const std::string amountStr = ask[1];
-            orders->add(OrderType::Sell, std::stod(priceStr), std::stod(amountStr), _exchange.getName());
+            orders->add(OrderType::Sell, std::stod(priceStr), std::stod(amountStr), _exchange);
         }
 
         market->insert(make_pair(assetPair, orders));

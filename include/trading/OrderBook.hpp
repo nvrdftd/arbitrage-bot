@@ -5,13 +5,14 @@
 #include <OrderType.hpp>
 #include <Heap.hpp>
 #include <Asset.hpp>
+#include <Exchange.hpp>
 
 namespace trading {
     class OrderBook {
         public:
             AssetPtr getL(OrderType);
             AssetPtr getH(OrderType);
-            void add(OrderType, double, double, const std::string &);
+            void add(OrderType, double, double, Exchange &);
         private:
             /*
             *   The following Heaps are used to maintain the min or max of any OrderType for a specific asset pair
