@@ -24,7 +24,7 @@ namespace trading {
             void setName(const std::string &);
             const std::string &getName() const;
             void setTradingFee(double);
-            const double getTradingFee() const;
+            double getTradingFee() const;
         private:
             std::string _name;
             MarketPtr _market;

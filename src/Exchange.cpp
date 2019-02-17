@@ -58,7 +58,7 @@ namespace trading {
     {
         _tradingFee = tradingFee;
     }
-    const double Exchange::getTradingFee() const
+    double Exchange::getTradingFee() const
     {
         return _tradingFee;
     }
