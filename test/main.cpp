@@ -49,11 +49,10 @@ int main(int argc, char **argv)
         arbitrageur.start();
     });
 
-    newth.detach();
-
     std::this_thread::sleep_for(std::chrono::milliseconds(3600000));
-
     arbitrageur.stop();
+
+    newth.join();
 
     return 0;
 }
