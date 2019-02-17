@@ -13,7 +13,10 @@ namespace arbitrage {
     void BinanceClient::connect(const std::string &assetA, const std::string &assetB)
     {
         _exchange.setName("Binance");
+
+        // Assume that trading fee is always 0.1%, although some variaion of it may be applied to a specific account
         _exchange.setTradingFee(0.001);
+
         std::thread connThread([this, &assetA, &assetB]() {
             std::cout << "Start a connection to Binance..." << std::endl;
             WSClient client;

@@ -15,7 +15,10 @@ namespace arbitrage {
     void KuCoinClient::connect(const std::string &assetA, const std::string &assetB)
     {
         _exchange.setName("KuCoin");
+
+        // Assume that trading fee is always 0.1%, although some variaion of it may be applied to a specific account
         _exchange.setTradingFee(0.001);
+        
         std::thread connThread([this, &assetA, &assetB]() {
             std::cout << "Start a connection to KuCoin..." << std::endl;
             RClient rClient;
