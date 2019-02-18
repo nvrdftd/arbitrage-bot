@@ -27,11 +27,10 @@ namespace arbitrage {
             std::string assetPair = assetA + "-" + assetB;
             toUppercase(assetPair);
             while (1) {
-                resJ = rClient.get("api.kucoin.com", "443", "/v1/open/orders?symbol=" + assetPair);
-                if (resJ["success"] == true) {
+                resJ = rClient.get("openapi-v2.kucoin.com", "443", "/api/v1/market/orderbook/level2_20?symbol=" + assetPair);
+                if (resJ["code"] == "200000") {
                     std::cout << "Receiving data from KuCoin..." << std::endl;
                     _exchange.updateMarket(createMarket(resJ, assetA + assetB));
-                    continue;
                 } else {
                     throw "KuCoin symbol error";
                 }
@@ -52,12 +51,16 @@ namespace arbitrage {
 
         const auto &data = dataJ["data"];
 
-        for (const auto &buy: data["BUY"]) {
-            orders->add(OrderType::Buy, buy[0], buy[1], _exchange);
+        for (const auto &bid: data["bids"]) {
+            const std::string priceStr = bid[0];
+            const std::string amountStr = bid[1];
+            orders->add(OrderType::Buy, std::stod(priceStr), std::stod(amountStr), _exchange);
         }
 
-        for (const auto &sell: data["SELL"]) {
-            orders->add(OrderType::Sell, sell[0], sell[1], _exchange);
+        for (const auto &ask: data["asks"]) {
+            const std::string priceStr = ask[0];
+            const std::string amountStr = ask[1];
+            orders->add(OrderType::Sell, std::stod(priceStr), std::stod(amountStr), _exchange);
         }
 
         market->insert(make_pair(assetPair, orders));
