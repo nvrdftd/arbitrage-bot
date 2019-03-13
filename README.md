@@ -1,4 +1,6 @@
-## Arbitrage Bot in Crypto
+# Arbitrage Bot in Crypto
+
+# Part I
 
 ## Future Improvements
 * Exception handling: The bot may encounter a few issues, one of which is **disconnection to exchanges**. While fetching the exchanges' data or executing trade, it is possible that one of the connections to exchanges is lost. The bot should reconnect to the exchange before the trade execution.
@@ -15,3 +17,17 @@
 * API version update: The APIs provided by crypto exchanges may constantly change given that it is an emerging market. In order to resolve this issue, we have to modify our code accordingly. However, this could cause our system downtime, losing the chance of earning profits. We will need a general mechanism to add in a new API configuration to retrieve the crypto exchange data and trade on crypto.
 * Trading inconsistency: Though we may successfully execute trade on one exchange but fail on another exchange, which increases the risk of losing total profits. In this case, the system should ensure that these exchanges are well connected before each trade execution.
 * Time sensitivity: Provided that the time taken by any exchange to return results is different, we may be able to measure the time difference to successfully execute trade on each exchange. In turn, we could adjust the internal execution moment for each exchange to maintain the simultaneity of trade execution.
+
+# Part II
+
+## Trading Inconsistency Mitigation
+If trading inconsistency occurs, it cannot be undone and the total profits will have been decreased. However, we can have an inventory that keeps track of the losses the system has caused due to the failure. Before each trade execution, the bot will decide how many crypto it will buy in given the inventory. That is, if it is not needed to buy, then the bot can directly sell these crypto from the inventory to mitigate the previous losses. The interesting thing is that it may be more profitable to sell at this moment than that if the previous trade execution was wholly successful.
+
+## Monitoring of all Crypto Pairs Between KuCoin and Binance
+Each crypto pair can be monitored by a dedicated cluster, including a primary machine, two backup machines, and two arbiter machines. The primary is to receiving and updating with two exchanges. The backups are continuously in sync with data from the primary. The arbiter is to keep asking if the primary and backups are running. If the primary is down, then one of the two arbiters promotes one of the backups as a primary. However, two arbiters may promote a different backup as a primary at the same time. To resolve this issue, whenever each arbiter detects a primary crash, it will ask the other arbiter if a new primary is assigned before it promotes a backup.
+
+## Database Design for Tracking Trade history
+Suppose that our trade execution is processed on the primary in the aforementioned cluster for each pair. After each execution, it sends out the information to a cluster of database servers which will be used for client applications (trader apps). In this cluster, we will have 2n+1 database servers to store the trade history. The reason that we have that number of servers is that we actually use a voting mechanism to eliminate undetermination whenever they choose which is the next primary. Moreover, since the data size for each trade execution, which is associated with an dedicated account mentioned below, is limited, we could use NoSQL servers to store the history, which gives the trader faster access to the trade history compared to the performance of SQL JOIN operations.
+
+## In the Presence of API Request Limitation
+We may encounter the situation where a limit of API requests is reached. One solution is to own a specific number of accounts. Every account is for each monitored pair to avoid the limitation. Plus, we may need a cluster of database servers to keep these account information.
