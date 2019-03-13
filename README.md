@@ -31,3 +31,21 @@ Suppose that our trade execution is processed on the primary in the aforemention
 
 ## In the Presence of API Request Limitation
 We may encounter the situation where a limit of API requests is reached. One solution is to own a specific number of accounts. Every account is for each monitored pair to avoid the limitation. Plus, we may need a cluster of database servers to keep these account information.
+
+# Part III
+
+## 1)
+Since the buy order is undoable, other than saving it into the inventory, we could also involve other exchanges to fill the sell order that was not possible to execute previously. Using the following mechanism to keep track of time difference, we collect the price and amount of crypto pair from each exchange.
+## 2)
+To lower the chance of the problem, we can consider the following time taken.
+- The time (Sa) to send a request to exchange A, Sb to exchange B
+- The time (Ra) to receive a response from exchange A, Rb from exchange B
+- The round-trip time (Sa + Ra) for exchange A, (Sb + Rb) for exchange B
+- The time (I) to swap and access to the pair price in the bot (We may ignore this factor under the assumption that our data structures and algorithms are efficiently implemented.)
+
+Now that Ta = Sa + Ra + Sa for exchange A, and Tb = Sb + Rb + Sb for exchange B to successfully update pair price and execute trade, the bot can constantly check as follows.
+- If Ta > Tb and n >= 0 where n = (Ta - Sb) / (Sb + Rb), we make sure that the bot updates the information from exchange B n times.
+- If Ta = Tb, then it is almost perfect but not really because of uncontrolled factors from the outside world.
+- If Ta < Tb, then do the opposite to the above to minimize the loss.
+
+In reality, these decision factors may be mainly based on the history of network traffic.
