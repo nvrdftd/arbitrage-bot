@@ -35,7 +35,7 @@ We may encounter the situation where a limit of API requests is reached. One sol
 # Part III
 
 ## 1)
-Since the buy order is undoable, other than saving it into the inventory, we could also involve other exchanges to fill the sell order that was not possible to execute previously. Using the following mechanism to keep track of time difference, we collect the price and amount of crypto pair from each exchange.
+Since the buy order is undoable, other than saving it into the inventory, we could also involve other exchanges to fill the sell order that was not possible to execute previously. Using the mechanism below to keep track of time difference, we collect the price and amount of crypto pair from each exchange to seek any profitable opportunity of selling out the unchangeable buy order.
 ## 2)
 To lower the chance of the problem, we can consider the following time taken.
 - The time (Sa) to send a request to exchange A, Sb to exchange B
@@ -48,4 +48,4 @@ Now that Ta = Sa + Ra + Sa for exchange A, and Tb = Sb + Rb + Sb for exchange B 
 - If Ta = Tb, then it is almost perfect but not really because of uncontrolled factors from the outside world.
 - If Ta < Tb, then do the opposite to the above to minimize the loss.
 
-In reality, these decision factors may be mainly based on the history of network traffic.
+In reality, these deciding factors may be mainly based on the history of network traffic.
