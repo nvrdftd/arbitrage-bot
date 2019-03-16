@@ -53,7 +53,8 @@ In reality, these deciding factors may be mainly based on the history of network
 # Part IV
 
 ## Central Monitor System Design
-The following diagram is a high-level overview of the system. As shown in the grey area of the diagram, we employ a group of pair monitors, and each crypto pair is monitored by a dedicated **Pair Monitor** as before mentioned. Once order books arrive from each pair monitor, they are pushed to the in-memory databases which is used by the **Aggregator** microservice for the client to fetch the aggregate order book.
+The following diagram is a high-level overview of the system. As shown in the grey area, we employ a group of pair monitors, and each crypto pair is monitored by a dedicated **Pair Monitor** cluster as before mentioned. In each one of them, the primary server will aggregate and update the current order book. Every time the current oder book is updated, it is pushed to the in-memory databases which can be fast accessed by these servers for the client to fetch the aggregate order book.
+![Central Monitor Sys](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/central-monitor-sys.png)
 
 ## Stale Order Books
 We may create an internal order book from the last order book and last trade execution. This internal order book is newer than the last order book received from exchanges in that the former was updated with the last trade. Without comparison between the internal order book and a new order book that just arrived,
@@ -62,3 +63,10 @@ We may create an internal order book from the last order book and last trade exe
 We may assign each order book a unique ID, and each trade execution a unique ID as well. The system keeps an internal state in which the IDs of the most recent order book and the last trade execution, are continuously updated. Suppose that one trade has been made successfully, and another trade comes in almost at the same time. The latter will check the internal state and wait for the next order book if the ID of the last order book is the same as that when the previous trade was executed.
 
 ## Architecture of Algo Trading System
+
+Design A
+
+Design B
+
+Suppose that each crypto pair was monitored
+Design C
