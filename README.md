@@ -26,7 +26,7 @@ If trading inconsistency occurs, it cannot be undone and the total profits will 
 ## Monitoring of all Crypto Pairs Between KuCoin and Binance
 Each crypto pair can be monitored by a dedicated cluster, including a primary machine, two backup machines, and two arbiter machines. The primary is to receiving and updating with two exchanges. The backups are continuously in sync with data from the primary. The arbiter is to keep asking if the primary and backups are running. If the primary is down, then one of the two arbiters promotes one of the backups as a primary. However, two arbiters may promote a different backup as a primary at the same time. To resolve this issue, whenever each arbiter detects a primary crash, it will ask the other arbiter if a new primary is assigned before it promotes a backup.
 
-## Database Design for Tracking Trade history
+## Database Design for Tracking Trade History
 Suppose that our trade execution is processed on the primary in the aforementioned cluster for each pair. After each execution, it sends out the information to a cluster of database servers which will be used for client applications (trader apps). In this cluster, we will have 2n+1 database servers to store the trade history. The reason that we have that number of servers is that we actually use a voting mechanism to eliminate undetermination whenever they choose which is the next primary. Moreover, since the data size for each trade execution, which is associated with a dedicated account mentioned below, is limited, we could use NoSQL servers to store the history, which gives the trader faster access to the trade history compared to the performance of SQL JOIN operations.
 
 ## In the Presence of API Request Limitation
@@ -49,3 +49,16 @@ Now that Ta = Sa + Ra + Sa for exchange A, and Tb = Sb + Rb + Sb for exchange B 
 - If Ta < Tb, then do the opposite to the above to minimize the loss.
 
 In reality, these deciding factors may be mainly based on the history of network traffic.
+
+# Part IV
+
+## Central Monitor System Design
+The following diagram is a high-level overview of the system. As shown in the grey area of the diagram, we employ a group of pair monitors, and each crypto pair is monitored by a dedicated **Pair Monitor** as before mentioned. Once order books arrive from each pair monitor, they are pushed to the in-memory databases which is used by the **Aggregator** microservice for the client to fetch the aggregate order book.
+
+## Stale Order Books
+We may create an internal order book from the last order book and last trade execution. This internal order book is newer than the last order book received from exchanges in that the former was updated with the last trade. Without comparison between the internal order book and a new order book that just arrived,
+
+## More Than One Trade at Once
+We may assign each order book a unique ID, and each trade execution a unique ID as well. The system keeps an internal state in which the IDs of the most recent order book and the last trade execution, are continuously updated. Suppose that one trade has been made successfully, and another trade comes in almost at the same time. The latter will check the internal state and wait for the next order book if the ID of the last order book is the same as that when the previous trade was executed.
+
+## Architecture of Algo Trading System
