@@ -40,3 +40,5 @@ CMakeCache.txt
 # Dependencies
 boost_1_69_0
 nlohmann
+
+*.DS_Store
