@@ -61,10 +61,10 @@ Suppose that aforementioned monitor system is a component of our algo trading sy
 ![Sequence of Actions](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png)
 where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are an order book, trade execution, and an internal order book, respectively.
 
-To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the client asks to execute trade.
+To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the algo trading bot and client asks to execute trade.
 
-## More Than One Trade at Once
-We may assign each order book a unique ID, and each trade execution a unique ID as well. The system keeps an internal state in which the IDs of the most recent order book and the last trade execution, are continuously updated. Suppose that one trade has been made successfully, and another trade comes in almost at the same time. The latter will check the internal state and wait for the next order book if the ID of the last order book is the same as that when the previous trade was executed.
+## More Than One Trading Strategy at Once
+Similarly, if we have multiple trading strategies happen to use the same order book simultaneously, we could employ the mechanism above to minimize the risk. Every strategy will make sure that a new order book is different from the internal order book and the last order book before each trade execution by accessing these in-memory databases in the diagram below.
 
 ## Architecture of Algo Trading System
 
@@ -75,6 +75,15 @@ One possible system architecture for algo trading is as follows. We incorporate 
 
 ## Design II
 
+Another possible design is that each algo trading bot sits at the front without a central monitor to receive incoming order books from exchanges. The trading bot will store a new order book into the in-memory databases accessed by API services with other databases.
+![Algo Trading System II](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture1.png)
+
+## Design III
+
+We could also separate the monitoring system and trading system.
+
 ## Advantages vs. Disadvantages
 
-
+- When algo trading bots are at the front line in the second design, we lower the network latency between order book monitoring and trade execution. However, this may overwhelm the trading bot with storing data to order books databases for the client to monitor.
+- Since the second design does not include the pair monitors like in the first design, the cost my decrease and it is reasonable to state that the risk of losing proper trading opportunities is decreased as well.
+- In the third design we may remove the order book databases as depicted in second design because we have a dedicated unit to monitor the pairs. However, this would cause inconsistency between monitoring and trading execution which is unnecessarily the same timing as receiving the monitoing.
