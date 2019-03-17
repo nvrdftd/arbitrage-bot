@@ -57,7 +57,12 @@ The following diagram is a high-level overview of the system. As shown in the gr
 ![Central Monitor Sys](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/central-monitor-sys.png)
 
 ## Stale Order Books
-We may create an internal order book from the last order book and last trade execution. This internal order book is newer than the last order book received from exchanges in that the former was updated with the last trade. Without comparison between the internal order book and a new order book that just arrived,
+Suppose that aforementioned monitor system is a component of our algo trading system, and that **Executor** is also a component which handles trade execution separately from the monitoring in order to eliminate the network latency. A sequence of actions could be represented as follows.
+![Sequence of Actions](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png)
+where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are an order book, trade execution, and an internal order book, respectively.
+We can go
+
+To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the client asks to execute trade.
 
 ## More Than One Trade at Once
 We may assign each order book a unique ID, and each trade execution a unique ID as well. The system keeps an internal state in which the IDs of the most recent order book and the last trade execution, are continuously updated. Suppose that one trade has been made successfully, and another trade comes in almost at the same time. The latter will check the internal state and wait for the next order book if the ID of the last order book is the same as that when the previous trade was executed.
