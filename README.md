@@ -60,7 +60,6 @@ The following diagram is a high-level overview of the system. As shown in the gr
 Suppose that aforementioned monitor system is a component of our algo trading system, and that **Executor** is also a component which handles trade execution separately from the monitoring in order to eliminate the network latency. A sequence of actions could be represented as follows.
 ![Sequence of Actions](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png)
 where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are an order book, trade execution, and an internal order book, respectively.
-We can go
 
 To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the client asks to execute trade.
 
@@ -69,9 +68,13 @@ We may assign each order book a unique ID, and each trade execution a unique ID 
 
 ## Architecture of Algo Trading System
 
-Design A
+## Design I
 
-Design B
+One possible system architecture for algo trading is as follows. We incorporate the previous central monitor design into this system. Each algo trading bot can directly access the in-memory databases which store the order books for each crypto pair. Also, the bots can trade with existing and available accounts, and after each trade, the trade history databases are updated accordingly. The API provides the client access to account information, trade history, and aggregate order books based on the client's request.
+![Algo Trading System I](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture.png)
 
-Suppose that each crypto pair was monitored
-Design C
+## Design II
+
+## Advantages vs. Disadvantages
+
+
