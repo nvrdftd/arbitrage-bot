@@ -72,7 +72,7 @@ Similarly, if we have multiple trading strategies happen to use the same order b
 
 ## Design I
 
-One possible system architecture for algo trading is as follows. We incorporate the previous central monitor design into this system. Each algo trading bot can directly access the in-memory databases which store the order books for each crypto pair. Also, the bots can trade with existing and available accounts, and after each trade, the trade history databases are updated accordingly. The API provides the client access to account information, trade history, and aggregate order books based on the client's request.
+One possible system architecture for algo trading is shown below. We incorporate the previous central monitor design into this system. Each algo trading bot can directly access the order books which are stored in the in-memory databases for each crypto pair. Also, the bots can trade with existing and available accounts, and after each trade, the trade history databases are updated accordingly. Moreover, the API provides the client access to account information, trade history, and aggregate order books based on the client's request.
 
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture.png" width="400">
 
@@ -84,14 +84,17 @@ Another possible design is that each algo trading bot sits at the front without 
 
 ## Design III
 
-We could also separate the monitoring system and trading system.
+We could also separate the monitoring system and trading system from the first and second architectures.
 
 ## Design IV
+
+A more robust system may be designed as follows. Without each trading strategy implemented as a trading bot, we introduce **Trading Strategy Parser** which allows the client to write a trading strategy in a domain-specific language. The script will be parsed into a set of internal rules comprehended by **Algo Trading Engine**. The engine will then trade based on the defined rules and the incoming order books monitored by another component.
 
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture2.png" width="400">
 
 ## Advantages vs. Disadvantages
 
-- When algo trading bots are at the front line in the second design, we lower the network latency between order book monitoring and trade execution. However, this may overwhelm the trading bot with storing data to order books databases for the client to monitor.
-- Since the second design does not include the pair monitors like in the first design, the cost my decrease and it is reasonable to state that the risk of losing proper trading opportunities is decreased as well.
-- In the third design we may remove the order book databases as depicted in second design because we have a dedicated unit to monitor the pairs. However, this would cause inconsistency between monitoring and trading execution which is unnecessarily the same timing as receiving the monitoing.
+- When algo trading bots are at the front line in Design II, we lower the network latency between order book monitoring and trade execution. However, this might overload the trading bot with receiving and storing order books to databases for the client to monitor.
+- Since Design II does not include the pair monitors like in Design I, the cost may decrease and it is reasonable to state that the risk of losing proper trading opportunities is decreased as well.
+- In Design III we may remove the order book databases as depicted in Design II because we have a dedicated unit to monitor the pairs. However, this would cause inconsistency between monitoring and trading execution.
+- Design IV eliminates the extra time for implementing a trading bot since the robust engine has been previously created. As well, this could be easier to maintain without specifically targeting each trading bot.
