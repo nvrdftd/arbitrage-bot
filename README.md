@@ -59,9 +59,10 @@ The following diagram is a high-level overview of the system. As shown in the gr
 
 ## Stale Order Books
 Suppose that aforementioned monitor system is a component of our algo trading system, and that **Executor** is also a component which handles trade execution separately from the monitoring in order to eliminate the network latency. A sequence of actions could be represented as follows.
+
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png" width="400">
 
-where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are an order book, trade execution, and an internal order book, respectively.
+where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are representations of an order book, trade execution, and an internal order book, respectively.
 
 To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the algo trading bot and client asks to execute trade.
 
