@@ -54,11 +54,13 @@ In reality, these deciding factors may be mainly based on the history of network
 
 ## Central Monitor System Design
 The following diagram is a high-level overview of the system. As shown in the grey area, we employ a group of pair monitors, and each crypto pair is monitored by a dedicated **Pair Monitor** cluster as before mentioned. In each one of them, the primary server will aggregate and update the current order book. Every time the current oder book is updated, it is pushed to the in-memory databases which can be fast accessed by these servers for the client to fetch the aggregate order book.
-![Central Monitor Sys](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/central-monitor-sys.png)
+
+<img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/central-monitor-sys.png" width="400">
 
 ## Stale Order Books
 Suppose that aforementioned monitor system is a component of our algo trading system, and that **Executor** is also a component which handles trade execution separately from the monitoring in order to eliminate the network latency. A sequence of actions could be represented as follows.
-![Sequence of Actions](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png)
+<img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/seq-actions.png" width="400">
+
 where *O<sub>i</sub>*, *E<sub>i</sub>*, and *I<sub>i</sub>* are an order book, trade execution, and an internal order book, respectively.
 
 To deal with stale order books, we may create an internal order book (*I<sub>i</sub>*) from the last order book (*O<sub>i</sub>*) and last trade execution (*E<sub>i</sub>*). Every time the next order book (*O<sub>i+1</sub>*) arrives, the system compares the two order books (*O<sub>i</sub>* and *O<sub>i+1</sub>*). If they are the same order books and an internal order book (*I<sub>i</sub>*) has been created due to the last trade execution (*E<sub>i</sub>*), then drop the next trade execution (*E<sub>i+1</sub>*) depicted as a red circle above. The system will check this whenever the algo trading bot and client asks to execute trade.
@@ -71,16 +73,22 @@ Similarly, if we have multiple trading strategies happen to use the same order b
 ## Design I
 
 One possible system architecture for algo trading is as follows. We incorporate the previous central monitor design into this system. Each algo trading bot can directly access the in-memory databases which store the order books for each crypto pair. Also, the bots can trade with existing and available accounts, and after each trade, the trade history databases are updated accordingly. The API provides the client access to account information, trade history, and aggregate order books based on the client's request.
-![Algo Trading System I](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture.png)
+
+<img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture.png" width="400">
 
 ## Design II
 
 Another possible design is that each algo trading bot sits at the front without a central monitor to receive incoming order books from exchanges. The trading bot will store a new order book into the in-memory databases accessed by API services with other databases.
-![Algo Trading System II](https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture1.png)
+
+<img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture1.png" width="400">
 
 ## Design III
 
 We could also separate the monitoring system and trading system.
+
+## Design IV
+
+<img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture2.png" width="400">
 
 ## Advantages vs. Disadvantages
 
