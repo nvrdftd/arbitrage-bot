@@ -82,31 +82,31 @@ However, in the case that more than one algo strategy has been deployed as tradi
 
 ## Architecture of Algo Trading System
 
-## Design I
+### Design I
 
 One possible system architecture for algo trading is shown below. We incorporate the previous central monitor design into this system. Each algo trading bot can directly access the order books which are stored in the in-memory databases for each crypto pair. Also, the bots can trade with existing and available accounts, and after each trade, the trade history databases are updated accordingly. Moreover, the API provides the client access to account information, trade history, and aggregate order books based on the client's request.
 
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture.png" width="400">
 
-## Design II
+### Design II
 
-Another possible design is that each algo trading bot sits at the front without a central monitor to receive incoming order books from exchanges. The trading bot will store a new order book into the in-memory databases accessed by API services with other databases.
+Another possible design is that each algo trading bot sits at the front without a central monitor responsible for receiving incoming order books from exchanges. The trading bot will store a new order book into the in-memory databases accessed by API services.
 
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture1.png" width="400">
 
-## Design III
+### Design III
 
-We could also separate the monitoring system and trading system from the first and second architectures.
+We could also separate the monitoring system and trading system from Design I and Design II.
 
-## Design IV
+### Design IV
 
-A more robust system may be designed as follows. Without each trading strategy implemented as a trading bot, we introduce **Trading Strategy Parser** which allows the client to write a trading strategy in a domain-specific language. The script will be parsed into a set of internal rules comprehended by **Algo Trading Engine**. The engine will then trade based on the defined rules and the incoming order books monitored by another component.
+A more robust system may be designed as follows. Without each trading strategy implemented as a trading bot, we introduce **Trading Strategy Parser** which allows the client to write an algo trading strategy in a domain-specific language. The script will be parsed into a set of internal rules comprehensible by **Algo Trading Engine**. The engine will then trade based on the defined rules and the incoming order books monitored by another component.
 
 <img src="https://github.com/nvrdftd/arbitrage-bot/blob/master/img/algo-trade-architecture2.png" width="400">
 
-## Advantages vs. Disadvantages
+### Advantages vs. Disadvantages
 
-- When algo trading bots are at the front line in Design II, we lower the network latency between order book monitoring and trade execution. However, this might overload the trading bot with receiving and storing order books to databases for the client to monitor.
+- When algo trading bots are at the front line in Design II, we lower the network latency between order book monitoring and trade execution. However, this might overload the trading bot with storing order books to databases for the client to monitor. That is, we may still need another compnent to process the order books before storing them into databases.
 - Since Design II does not include the pair monitors like in Design I, the cost may decrease and it is reasonable to state that the risk of losing proper trading opportunities is decreased as well.
-- In Design III we may remove the order book databases as depicted in Design II because we have a dedicated unit to monitor the pairs. However, this would cause inconsistency between monitoring and trading execution.
-- Design IV eliminates the extra time for implementing a trading bot since the robust engine has been previously created. As well, this could be easier to maintain without specifically targeting each trading bot.
+- In Design III we may remove the order book databases as depicted in Design II because we have a dedicated unit to monitor the pairs. However, this would cause inconsistency between monitoring and trading execution, though the trading result will be not influenced.
+- Design IV eliminates the extra time for implementing a trading bot since the robust engine has been previously created. Furthermore, it could be easier to maintain this design without specifically targeting each trading bot.
